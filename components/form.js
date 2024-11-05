@@ -1,10 +1,18 @@
 import { View, Button, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
 import { Formik, Field } from "formik";
 import * as yup from "yup";
+import { useNavigation } from "@react-navigation/native";
 
 import CustomInput from "./utils/input.custom";
+import { useState } from "react";
+
+/// firebase
+import { AUTH } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function FormComp(){
+    const [type,setType] = useState(true);
+    const navigation = useNavigation();
 
     const schema = yup.object({
         email:yup
@@ -17,6 +25,16 @@ export default function FormComp(){
         .required("Password is required"),
     })
 
+    const registerUser = async({email,password}) => {
+        try{
+            await createUserWithEmailAndPassword(
+                AUTH,email,password
+            );
+            navigation.navigate('Home')
+        } catch(e){
+            console.log(e)
+        }
+    }
 
     return(
         <KeyboardAvoidingView
@@ -27,8 +45,13 @@ export default function FormComp(){
         <Formik
             initialValues={{email:'',password:''}}
             onSubmit={(values,{ resetForm })=>{
-                console.log(values)
-                // navigation.navigate('Home')
+                if(type){
+                    /// REGISTER
+                    registerUser(values)
+                } else {
+                    // SIGN IN
+
+                }
             }}
             validationSchema={schema}
         >
@@ -50,12 +73,19 @@ export default function FormComp(){
             />
 
             <Button
-                title="Submit"
+                title={ type ? ' Register':'Sign in'}
                 onPress={handleSubmit}
             />
         </View>
         )}
         </Formik>
+        <View style={{marginTop:10}}>
+            <Button
+                onPress={()=> setType(!type)}
+                title="Change type"
+                color='black'
+            />
+        </View>
         </ScrollView>
         </KeyboardAvoidingView>
     )
