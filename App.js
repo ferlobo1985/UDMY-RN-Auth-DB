@@ -11,7 +11,7 @@ export default function App() {
     <NavigationContainer>
       <Drawer.Navigator>
         <Drawer.Screen name="Home" component={Home}/>
-        <Drawer.Screen name="Sign in" component={SignIn}/>
+        <Drawer.Screen name="Auth" component={SignIn}/>
       </Drawer.Navigator>
     </NavigationContainer>
   );
