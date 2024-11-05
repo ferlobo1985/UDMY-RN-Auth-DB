@@ -8,7 +8,7 @@ import { useState } from "react";
 
 /// firebase
 import { AUTH } from "../firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function FormComp(){
     const [type,setType] = useState(true);
@@ -27,9 +27,16 @@ export default function FormComp(){
 
     const registerUser = async({email,password}) => {
         try{
-            await createUserWithEmailAndPassword(
-                AUTH,email,password
-            );
+            await createUserWithEmailAndPassword(AUTH,email,password);
+            navigation.navigate('Home')
+        } catch(e){
+            console.log(e)
+        }
+    }
+
+    const signInUser = async({email,password}) => {
+        try{
+            await signInWithEmailAndPassword(AUTH,email,password);
             navigation.navigate('Home')
         } catch(e){
             console.log(e)
@@ -50,7 +57,7 @@ export default function FormComp(){
                     registerUser(values)
                 } else {
                     // SIGN IN
-
+                    signInUser(values)
                 }
             }}
             validationSchema={schema}
